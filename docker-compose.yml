@@ -1,0 +1,48 @@
+version: '3.5'
+services:
+  webserver:
+    build:
+      context: ./apache-php
+      dockerfile: Dockerfile
+    container_name: app
+    networks:
+      static-network:
+        ipv4_address: 172.21.128.2
+    image: centos7-apache-php7:v1
+    ports:
+      - 80
+    environment:
+      XDEBUG_CONFIG: "remote_host=192.168.1.18 remote_enable=1 idekey=${PHP_XDEBUG_IDE_KEY} remote_port=9000"
+      PHP_IDE_CONFIG: "serverName=Localhost"
+    volumes:
+      - ../affinion-php7:/var/www/app/public_html
+#      - ./apache-php/etc/httpd/conf/httpd.conf:/etc/httpd/conf/httpd.conf
+      - ./apache-php/etc/httpd/conf.d/vhost.conf:/etc/httpd/conf.d/vhost.conf
+
+#  mysql:
+#    build:
+#      context: ./mariadb
+#      dockerfile: Dockerfile
+#    container_name: maria-db
+#    networks:
+#      static-network:
+#        ipv4_address: 172.21.128.3
+#    image: centos7-mariadb:v1
+#    tty: true
+#    ports:
+#      - ${DB_LOCAL_PORT}:${DB_CONTAINER_PORT}
+##    volumes:
+##      - ../docker/data/mysql:/var/lib/mysql
+#    environment:
+#      - MYSQL_HOST=${DB_HOST}
+#      - MYSQL_DATABASE=${DB_NAME}
+#      - MYSQL_USER=${DB_USER}
+#      - MYSQL_PASSWORD=${DB_PASSWORD}
+#      - MYSQL_ROOT_USER=${DB_ROOT_USER}
+#      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+
+networks:
+  static-network:
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
